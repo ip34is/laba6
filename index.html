@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>First Page</title>
+    <style>
+        body {
+            margin: 0;
+            display: grid;
+            grid-template-rows: 15vh 60vh 10vh 15vh;
+            grid-template-columns: 1fr 3fr 1fr;
+            height: 100vh;
+            overflow-x: hidden;
+        }
+
+        .block {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        .block1 {
+            background-color: #cce4ff;
+            grid-column: 1 / -1;
+        }
+
+        .block2 {
+            background-color: #ffe4cc;
+        }
+
+        .block3 {
+            background-color: #ffffff;
+        }
+
+        .block4 {
+            background-color: #ffe4cc;
+        }
+
+        .block5 {
+            background-color: #e4ffcc;
+            grid-column: 1 / -1;
+        }
+
+        .block6 {
+            background-color: #cce4ff;
+            grid-column: 1 / -1;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        input, button {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        #objectPreview div {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #000;
+            text-align: center;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body>
+<div class="block block1"><a href="display.html">Page 2</a></div>
+<div class="block block2">
+    <form id="objectForm">
+        <label>Text: <input type="text" name="text" required></label>
+        <label>Color: <input type="color" name="color"></label>
+        <button type="submit">Create Object</button>
+    </form>
+    <div id="objectPreview"></div>
+</div>
+<div class="block block3">Middle</div>
+<div class="block block4">Right Sidebar</div>
+<div class="block block5">
+    <button id="deleteData">Не зберігати</button>
+</div>
+<div class="block block6">Footer</div>
+
+<script>
+    document.getElementById('objectForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(e.target);
+        const objectData = Object.fromEntries(formData.entries());
+
+        const preview = document.getElementById('objectPreview');
+        preview.innerHTML = `<div style="background:${objectData.color};">${objectData.text}</div>`;
+
+        await fetch('save.php', {
+            method: 'POST',
+            body: JSON.stringify(objectData),
+            headers: { 'Content-Type': 'application/json' },
+        });
+
+        alert('Object saved!');
+    });
+
+    document.getElementById('deleteData').addEventListener('click', async () => {
+        const response = await fetch('delete.php', { method: 'POST' });
+        if (response.ok) {
+            alert('Data deleted!');
+            location.reload();
+        } else {
+            alert('Failed to delete data.');
+        }
+    });
+</script>
+</body>
+</html>
